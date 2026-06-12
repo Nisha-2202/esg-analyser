@@ -2,8 +2,10 @@ import axios from 'axios';
 
 const API = axios.create({ 
   baseURL: 'https://esg-analyser-backend.onrender.com',
-  headers: { 'Cache-Control': 'no-cache' }
+  headers: { 'Cache-Control': 'no-cache' },
+  timeout: 30000
 });
+
 API.interceptors.request.use(config => {
   const token = localStorage.getItem('token');
   if (token) config.headers.Authorization = `Bearer ${token}`;
