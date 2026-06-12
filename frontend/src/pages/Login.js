@@ -28,20 +28,24 @@ export default function Login() {
       });
   }, [navigate]);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true); setError('');
-    try {
-      const res = await login({ email, password });
-      localStorage.setItem('token', res.data.access_token);
-      localStorage.setItem('name', res.data.name);
-      navigate('/dashboard');
-    } catch {
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+  setLoading(true); 
+  setError('');
+  try {
+    const res = await login({ email, password });
+    localStorage.setItem('token', res.data.access_token);
+    localStorage.setItem('name', res.data.name);
+    navigate('/dashboard');
+  } catch (err) {
+    if (err.code === 'ECONNABORTED') {
+      setError('Server starting up... Please try again in 30 seconds!');
+    } else {
       setError('Wrong email or password!');
     }
-    setLoading(false);
-  };
-
+  }
+  setLoading(false);
+};
   if (checking) return (
     <div style={{background:'#0f1117',minHeight:'100vh',display:'flex',
       alignItems:'center',justifyContent:'center',color:'#888',fontSize:14}}>
