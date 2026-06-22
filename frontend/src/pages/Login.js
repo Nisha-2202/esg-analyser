@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { login, getDashboard } from '../api';
+import { login } from '../api';
 import './Auth.css';
 
 export default function Login() {
@@ -8,48 +8,30 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [error, setError]       = useState('');
   const [loading, setLoading]   = useState(false);
-  const [checking, setChecking] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      setChecking(false);
-      return;
-    }
-    // Token இருந்தா backend-ல verify பண்ணு
-   const token = localStorage.getItem('token');
-   if (token) {
-   navigate('/dashboard');
-   } else {
-   setChecking(false);
-   }
+    const savedToken = localStorage.getItem('token');
+    if (savedToken) navigate('/dashboard');
   }, [navigate]);
 
- const handleSubmit = async (e) => {
-  e.preventDefault();
-  setLoading(true); 
-  setError('');
-  try {
-    const res = await login({ email, password });
-    localStorage.setItem('token', res.data.access_token);
-    localStorage.setItem('name', res.data.name);
-    navigate('/dashboard');
-  } catch (err) {
-    if (err.code === 'ECONNABORTED') {
-      setError('Server starting up... Please try again in 30 seconds!');
-    } else {
-      setError('Wrong email or password!');
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true); setError('');
+    try {
+      const res = await login({ email, password });
+      localStorage.setItem('token', res.data.access_token);
+      localStorage.setItem('name', res.data.name);
+      navigate('/dashboard');
+    } catch (err) {
+      if (err.code === 'ECONNABORTED') {
+        setError('Server starting up... Please try again in 30 seconds!');
+      } else {
+        setError('Wrong email or password!');
+      }
     }
-  }
-  setLoading(false);
-};
-  if (checking) return (
-    <div style={{background:'#0f1117',minHeight:'100vh',display:'flex',
-      alignItems:'center',justifyContent:'center',color:'#888',fontSize:14}}>
-      Checking session...
-    </div>
-  );
+    setLoading(false);
+  };
 
   return (
     <div className="auth-wrap">
@@ -64,7 +46,7 @@ export default function Login() {
           <input className="auth-input" type="password" placeholder="Password"
             value={password} onChange={e => setPassword(e.target.value)} required />
           <button className="auth-btn" type="submit" disabled={loading}>
-            {loading ? 'Signing in...' : 'Sign In'}
+            {loading ? 'Starting server... Please wait (30s)' : 'Sign In'}
           </button>
         </form>
         <p className="auth-link">No account? <Link to="/signup">Sign up</Link></p>
