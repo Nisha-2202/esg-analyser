@@ -21,8 +21,14 @@ export default function Dashboard() {
 
   const logout = () => { localStorage.clear(); navigate('/login'); };
 
-  if (loading) return <div className="loading">Loading...</div>;
-
+ if (loading) return (
+  <div className="loading">
+    <div>📊 ESG Analyser</div>
+    <div style={{fontSize:14,marginTop:8,color:'#888'}}>
+      Fetching real market data... Please wait
+    </div>
+  </div>
+);
   const chartData = data.top_esg.map(c => ({
     name: c.name.split(' ')[0],
     esg: c.esg,
