@@ -18,14 +18,12 @@ export default function Login() {
       return;
     }
     // Token இருந்தா backend-ல verify பண்ணு
-    getDashboard()
-      .then(() => navigate('/dashboard'))
-      .catch(() => {
-        // Invalid token — clear பண்ணு
-        localStorage.removeItem('token');
-        localStorage.removeItem('name');
-        setChecking(false);
-      });
+   const token = localStorage.getItem('token');
+   if (token) {
+   navigate('/dashboard');
+   } else {
+   setChecking(false);
+   }
   }, [navigate]);
 
  const handleSubmit = async (e) => {
